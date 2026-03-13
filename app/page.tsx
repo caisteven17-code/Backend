@@ -1,6 +1,5 @@
-import { redirect } from 'next/navigation';
+import { redirect } from "next/navigation";
 
-export default function Home() {
-  // This automatically sends the user to the login page
-  redirect('/login');
+export default async function Home() {
+  redirect("/login");
 }

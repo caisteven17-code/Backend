@@ -1,10 +1,26 @@
-import React from 'react';
-// 1. Removed HelpCircle from the imports
-import { User, Settings } from 'lucide-react'; 
+import { redirect } from "next/navigation";
+import { Settings, User } from "lucide-react";
 
-export default function DashboardPage() {
+import { createClient } from "@/utils/supabase/server";
+
+export default async function DashboardPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const displayName =
+    user.user_metadata.full_name ??
+    user.user_metadata.name ??
+    user.email ??
+    "Beneficiary";
+
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
+    <div className="h-screen overflow-hidden flex flex-col bg-gray-100">
       
       {/* Top Navigation Bar */}
       <header className="bg-[#e09f9f] text-white px-6 py-4 flex items-center justify-between shadow-sm z-20 relative">
@@ -25,7 +41,7 @@ export default function DashboardPage() {
         <div className="flex items-center space-x-4">
           <button className="flex items-center space-x-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full transition text-sm font-medium">
             <User className="h-4 w-4" />
-            <span>Maria Santos</span>
+            <span>{displayName}</span>
           </button>
           <button className="hover:rotate-90 transition duration-300">
             <Settings className="h-6 w-6" />
@@ -52,10 +68,10 @@ export default function DashboardPage() {
         <div className="relative z-10 flex flex-col items-center text-center w-full max-w-2xl">
           
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-2">
-            Welcome back, Maria!
+            Welcome back, {displayName}!
           </h2>
           <p className="text-lg text-gray-200 mb-10">
-            Here's your disaster relief assistance summary
+            Here&apos;s your disaster relief assistance summary
           </p>
 
           {/* Amount Card */}

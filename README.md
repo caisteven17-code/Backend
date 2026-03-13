@@ -1,36 +1,145 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Beneficiary App
 
-## Getting Started
+Next.js 16 frontend for the Beneficiary portal with Supabase email/password authentication.
 
-First, run the development server:
+## Features
+
+- Supabase email/password login
+- Session-aware redirects
+- Protected dashboard route
+- Cookie refresh handling with Next.js `proxy.ts`
+
+## Tech Stack
+
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- Supabase Auth
+
+## Requirements
+
+- Node.js 20 or newer
+- npm
+- A Supabase project
+
+## Project Setup From Scratch
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Create your environment file
+
+Create `.env.local` in the project root.
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+You can also copy the sample file:
+
+```bash
+copy .env.example .env.local
+```
+
+If you already use `.env`, that also works, but `.env.local` is the safer local default for Next.js.
+
+### 3. Configure Supabase Auth
+
+In your Supabase dashboard:
+
+1. Open `Authentication`.
+2. Make sure `Email` provider is enabled.
+3. Go to `Users`.
+4. Create a user manually, or sign one up through your own flow later.
+
+Use that same email and password on the app login page.
+
+### 4. Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The root route automatically redirects:
 
-## Learn More
+- to `/dashboard` if a session exists
+- to `/login` if no session exists
 
-To learn more about Next.js, take a look at the following resources:
+## Available Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run dev
+npm run build
+npm run start
+npm run lint
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Authentication Flow
 
-## Deploy on Vercel
+### Login
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- The login page submits email and password to Supabase using `signInWithPassword`.
+- On success, the app redirects to `/dashboard`.
+- On failure, the login form shows the Supabase error message.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Protected Routes
+
+- `/dashboard` checks the current Supabase user on the server.
+- Unauthenticated users are redirected back to `/login`.
+
+### Session Refresh
+
+- `proxy.ts` refreshes auth cookies for incoming requests.
+- Shared Supabase helpers live under `utils/supabase/`.
+
+## Important Files
+
+- `app/login/page.tsx` - login page shell and session redirect
+- `app/login/login-form.tsx` - client-side login form
+- `app/dashboard/page.tsx` - protected dashboard page
+- `app/page.tsx` - root redirect logic
+- `proxy.ts` - auth cookie refresh entry point
+- `utils/supabase/client.ts` - browser Supabase client
+- `utils/supabase/server.ts` - server Supabase client
+- `utils/supabase/middleware.ts` - session refresh helper
+- `.env.example` - sample environment variables
+
+## Verification
+
+The current setup has been checked with:
+
+```bash
+npm run lint
+npm run build
+```
+
+Notes:
+
+- `npm run build` passes.
+- `npm run lint` passes with warnings only for the existing `<img>` tags, which Next.js recommends replacing with `next/image`.
+
+## Current Limitation
+
+This implementation supports login for existing Supabase Auth users. It does not yet include:
+
+- sign up
+- forgot password
+- sign out
+
+Those can be added next if needed.
+
+
+login credential sample: 
+email: steven@hopecard.com
+password: abc12345
