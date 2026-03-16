@@ -141,5 +141,5 @@ Those can be added next if needed.
 
 
 login credential sample: 
-email: steven@hopecard.com
-password: abc12345
+email: sample@hopecard.com
+password: sample1

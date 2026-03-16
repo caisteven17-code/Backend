@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class AppService {
+export class HealthService {
   getHealth() {
     return {
       status: 'ok',
-      service: 'beneficiary-backend',
+      service: 'beneficiary-health-service',
       timestamp: new Date().toISOString(),
     };
   }
